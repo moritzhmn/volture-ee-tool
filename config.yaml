@@ -1,0 +1,19 @@
+pv_systems:
+  - name: PV_Mitte
+    panel_angle_deg: 30
+    efficiency: 0.18
+    location:
+      lat: 52.52
+      lon: 13.405
+    weather_file: berlin_clear_summer.csv
+
+wind_systems:
+  - name: Wind_Nord
+    rated_power: 3000
+    cut_in: 3
+    cut_out: 25
+    rated_speed: 12
+    location:
+      lat: 53.5511
+      lon: 9.9937
+    weather_file: hamburg_windy_day.csv
