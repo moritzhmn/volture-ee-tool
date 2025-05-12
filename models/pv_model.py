@@ -1,8 +1,8 @@
-from models.base_generator import BaseGenerator
+from .base_generator import BaseGenerator
 
 class PVModel(BaseGenerator):
-    def __init__(self, name, panel_angle_deg, efficiency, location, weather_file):
-        super().__init__(name, location, weather_file)
+    def __init__(self, name, panel_angle_deg, efficiency, location):
+        super().__init__(name, location)
         self.panel_angle_deg = panel_angle_deg
         self.efficiency = efficiency
 
