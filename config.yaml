@@ -5,7 +5,7 @@ pv_systems:
     location:
       lat: 52.52
       lon: 13.405
-    weather_file: berlin_clear_summer.csv
+    date: 2025-05-01
 
 wind_systems:
   - name: Wind_Nord
@@ -16,4 +16,4 @@ wind_systems:
     location:
       lat: 53.5511
       lon: 9.9937
-    weather_file: hamburg_windy_day.csv
+    date: 2025-05-01
