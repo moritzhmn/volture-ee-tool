@@ -1,5 +1,5 @@
 from .base_generator import BaseGenerator
-from .cp_interpolation import cp_function
+from .cp_interpolation import get_cp
 
 class WindModel(BaseGenerator):
     def __init__(
@@ -48,8 +48,7 @@ class WindModel(BaseGenerator):
         p_wind = 0.5 * self.air_density * swept_area * v ** 3
 
         # Einfaches c_p-Modell
-        cp = cp_function(v_val=v)
-        print("cp:", cp, "v:",v)
+        cp = get_cp(v)
 
         p_turbine = (cp * p_wind * (1 - self.wake_loss)) / 1000000  # Leistung in kW (Watt in kW)
 

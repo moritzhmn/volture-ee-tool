@@ -1,16 +1,31 @@
 import numpy as np
+from scipy.interpolate import interp1d
 
-# Polynomkoeffizienten, von höchstem bis niedrigstem Grad
-coefficients = [
-    -5.86175551e-17,  1.36598614e-14, -1.45243157e-12,  9.36020336e-11,
-    -4.09892561e-09,  1.29656657e-07, -3.07267464e-06,  5.57166505e-05,
-    -7.79153776e-04,  8.35464518e-03, -6.72998147e-02,  3.92710378e-01,
-    -1.56939198e+00,  3.92309678e+00, -5.12901760e+00,  2.51227193e+00
-]
-
-# Cp-Funktion mit numpy.polyval
-def cp_function(v_val):
-    return np.polyval(coefficients, v_val)
-
-
-print(np.polyval(coefficients, 23.87))
+def get_cp(v):
+    values = [
+        [2.2595, 0.0011],
+        [2.5324, 0.0904],
+        [3.0825, 0.1952],
+        [3.4584, 0.3077],
+        [4.2545, 0.3673],
+        [5.2936, 0.4324],
+        [6.5786, 0.4533],
+        [8.1080, 0.4566],
+        [9.0822, 0.4412],
+        [10.3016, 0.3949],
+        [11.3475, 0.3419],
+        [12.7434, 0.2493],
+        [13.8587, 0.1996],
+        [15.6348, 0.1434],
+        [16.8531, 0.1158],
+        [18.4538, 0.0871],
+        [19.8105, 0.0706],
+        [21.7234, 0.0540],
+        [24.1577, 0.0375],
+        [26.4528, 0.0254],
+        [28.1564, 0.0210],
+        [29.9642, 0.0176]
+    ]
+    v_vals, cp_vals = np.array(values).T
+    cp_interp = interp1d(v_vals, cp_vals, kind="cubic", fill_value=0.0, bounds_error=False)
+    return cp_interp(v)
