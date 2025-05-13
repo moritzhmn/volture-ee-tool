@@ -8,12 +8,19 @@ pv_systems:
     date: 2025-05-01
 
 wind_systems:
-  - name: Wind_Nord
-    rated_power: 3000
-    cut_in: 3
-    cut_out: 25
-    rated_speed: 12
+  - name: Windpark_Mitte
+    rated_power: 15000        # Nennleistung in kW
+    rotor_radius: 30
+    hub_height: 100
+    cut_in: 3                # m/s
+    rated_speed: 12          # m/s
+    cut_out: 25              # m/s
+    lambda_opt: 7.5
+    alpha: 0.15
+    wake_loss: 0.10          # Parkverlust (gesamter Windpark)
+    cp_curve_file: cp_data.csv
     location:
-      lat: 53.5511
-      lon: 9.9937
-    date: 2025-05-01
+      lat: 52.52
+      lon: 13.405
+    date: 2025-05-06
+    turbines: 10  # Anzahl der Turbinen im Windpark

@@ -20,20 +20,27 @@ def create_generators(config):
         generators.append((model, weather))
 
     for wind_cfg in config.get("wind_systems", []):
-        model = WindModel(
+        # Erstelle das Windmodell mit der angegebenen Anzahl der Turbinen
+        wind_model = WindModel(
             name=wind_cfg["name"],
             rated_power=wind_cfg["rated_power"],
+            rotor_radius=wind_cfg["rotor_radius"],
+            hub_height=wind_cfg["hub_height"],
             cut_in=wind_cfg["cut_in"],
-            cut_out=wind_cfg["cut_out"],
             rated_speed=wind_cfg["rated_speed"],
-            location=wind_cfg["location"]
+            cut_out=wind_cfg["cut_out"],
+            lambda_opt=wind_cfg.get("lambda_opt", 7.5),
+            alpha=wind_cfg.get("alpha", 0.2),
+            wake_loss=wind_cfg.get("wake_loss", 0.1),
+            location=wind_cfg["location"],
+            turbines_count=wind_cfg["turbines"]  # Anzahl der Turbinen im Windpark
         )
         weather = fetch_weather_from_api(
             lat=wind_cfg["location"]["lat"],
             lon=wind_cfg["location"]["lon"],
             date=wind_cfg["date"]
         )
-        generators.append((model, weather))
+        generators.append((wind_model, weather))
 
     return generators
 

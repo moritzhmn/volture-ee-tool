@@ -5,7 +5,7 @@ config = load_yaml_config("config.yaml")
 generators = create_generators(config)
 results = run_simulation(generators)
 
-# Strukturierte Ausgabe der Ergebnisse
+# Strukturierte Ausgabe der Ergebnisse‚
 for model_name, power_output in results.items():
     print(f"Ergebnisse für {model_name}:")
     for i, power in enumerate(power_output):
