@@ -9,8 +9,8 @@ pv_systems:
 
 wind_systems:
   - name: Windpark_Mitte
-    rated_power: 15000        # Nennleistung in kW
-    rotor_radius: 30
+    rated_power: 75     # Nennleistung in MW
+    rotor_radius: 57
     hub_height: 100
     cut_in: 3                # m/s
     rated_speed: 12          # m/s
@@ -23,4 +23,4 @@ wind_systems:
       lat: 52.52
       lon: 13.405
     date: 2025-05-06
-    turbines: 10  # Anzahl der Turbinen im Windpark
+    turbines: 25  # Anzahl der Turbinen im Windpark

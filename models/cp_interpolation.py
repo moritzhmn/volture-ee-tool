@@ -11,3 +11,6 @@ coefficients = [
 # Cp-Funktion mit numpy.polyval
 def cp_function(v_val):
     return np.polyval(coefficients, v_val)
+
+
+print(np.polyval(coefficients, 23.87))

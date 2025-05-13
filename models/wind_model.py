@@ -49,8 +49,9 @@ class WindModel(BaseGenerator):
 
         # Einfaches c_p-Modell
         cp = cp_function(v_val=v)
+        print("cp:", cp, "v:",v)
 
-        p_turbine = (cp * p_wind * (1 - self.wake_loss)) / 1000  # Leistung in kW (Watt in kW)
+        p_turbine = (cp * p_wind * (1 - self.wake_loss)) / 1000000  # Leistung in kW (Watt in kW)
 
         # Die Leistung jeder Turbine darf die Nennleistung nicht überschreiten
         p_turbine = min(p_turbine, self.turbine_rated_power)
