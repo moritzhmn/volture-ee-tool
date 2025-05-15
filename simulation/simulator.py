@@ -8,19 +8,25 @@ def create_generators(config):
     for pv_cfg in config.get("pv_systems", []):
         model = PVModel(
             name=pv_cfg["name"],
-            panel_angle_deg=pv_cfg["panel_angle_deg"],
-            efficiency=pv_cfg["efficiency"],
-            location=pv_cfg["location"]
+            rated_power=pv_cfg["rated_power"],
+            age=pv_cfg["age"],
+            shading=pv_cfg["shading"],
+            albedo=pv_cfg["albedo"],
+            azimut=pv_cfg["azimut"],
+            D_soil=pv_cfg["D_soil"],
+            tilt=pv_cfg["tilt"],
+            size=pv_cfg["size"],
+            location=(pv_cfg["location"]["lat"], pv_cfg["location"]["lon"])
         )
         weather = fetch_weather_from_api(
             lat=pv_cfg["location"]["lat"],
             lon=pv_cfg["location"]["lon"],
-            date=pv_cfg["date"]
+            date=pv_cfg["date"],
+            source="pv"
         )
         generators.append((model, weather))
 
     for wind_cfg in config.get("wind_systems", []):
-        # Erstelle das Windmodell mit der angegebenen Anzahl der Turbinen
         wind_model = WindModel(
             name=wind_cfg["name"],
             rated_power=wind_cfg["rated_power"],
@@ -33,12 +39,13 @@ def create_generators(config):
             alpha=wind_cfg.get("alpha", 0.2),
             wake_loss=wind_cfg.get("wake_loss", 0.1),
             location=wind_cfg["location"],
-            turbines_count=wind_cfg["turbines"]  # Anzahl der Turbinen im Windpark
+            turbines_count=wind_cfg["turbines"]
         )
         weather = fetch_weather_from_api(
             lat=wind_cfg["location"]["lat"],
             lon=wind_cfg["location"]["lon"],
-            date=wind_cfg["date"]
+            date=wind_cfg["date"],
+            source="wind"
         )
         generators.append((wind_model, weather))
 

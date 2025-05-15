@@ -1,6 +1,7 @@
 import time
 from utils.data_loader import load_yaml_config
 from simulation.simulator import create_generators, run_simulation
+import pandas as pd
 
 start_total = time.time()
 print("[INFO] Lade Konfiguration ...")
@@ -23,5 +24,7 @@ print("-" * 40)
 for model_name, power_output in results.items():
     print(f"Ergebnisse für {model_name}:")
     for i, power in enumerate(power_output):
-        print(f"  Stunde {i}: {power:.2f} MW")
+        # Wenn power eine Serie ist, extrahiere den Wert
+        power_value = power.iloc[0] if isinstance(power, pd.Series) else power
+        print(f"  Stunde {i}: {power_value:.3f} MW")
     print("-" * 40)

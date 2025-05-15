@@ -1,11 +1,17 @@
 pv_systems:
-  - name: PV_Mitte
-    panel_angle_deg: 30
-    efficiency: 0.18
+  - name: PV_Dach_Mitte
+    rated_power: 100              # Nennleistung in MW
+    age: 5                         # [Jahre]
+    shading: 0.05                   # 10 % Abschattung
+    albedo: 0.2                    # typische Umgebung (z. B. Gras)
+    azimut: 180                   # Südausrichtung (0=Norden, 180=Süden)
+    D_soil: 0.08                  # Verschmutzung (z.B 8%)
+    tilt: 30                       # 30° Neigung
+    size: 1200000                    # Fläche der Module in m²
     location:
-      lat: 52.52
-      lon: 13.405
-    date: 2025-05-01
+      lat: 51.723147                 # Breite (z. B. Berlin)
+      lon: 12.154292                 # Länge
+    date: 2025-05-14   
 
 wind_systems:
   - name: Windpark_Mitte
@@ -18,7 +24,6 @@ wind_systems:
     lambda_opt: 7.5
     alpha: 0.15
     wake_loss: 0.10          # Parkverlust (gesamter Windpark)
-    cp_curve_file: cp_data.csv
     location:
       lat: 52.52
       lon: 13.405
