@@ -11,7 +11,6 @@ class WindModel(BaseGenerator):
         rated_speed,
         rotor_radius,
         hub_height,
-        lambda_opt=7.5,
         alpha=0.2,
         wake_loss=0.10,
         location=None,
@@ -24,7 +23,6 @@ class WindModel(BaseGenerator):
         self.rated_speed = rated_speed
         self.rotor_radius = rotor_radius
         self.hub_height = hub_height
-        self.lambda_opt = lambda_opt
         self.alpha = alpha
         self.wake_loss = wake_loss
         self.air_density = 1.225  # kg/m³, Standardwert

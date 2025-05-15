@@ -1,31 +1,15 @@
 pv_systems:
-  - name: PV_Dach_Mitte
-    rated_power: 100              # Nennleistung in MW
-    age: 5                         # [Jahre]
-    shading: 0.05                   # 10 % Abschattung
-    albedo: 0.2                    # typische Umgebung (z. B. Gras)
-    azimut: 180                   # Südausrichtung (0=Norden, 180=Süden)
-    D_soil: 0.08                  # Verschmutzung (z.B 8%)
-    tilt: 30                       # 30° Neigung
-    size: 1200000                    # Fläche der Module in m²
-    location:
-      lat: 51.723147                 # Breite (z. B. Berlin)
-      lon: 12.154292                 # Länge
-    date: 2025-05-14   
-
-wind_systems:
-  - name: Windpark_Mitte
-    rated_power: 75     # Nennleistung in MW
-    rotor_radius: 57
-    hub_height: 100
-    cut_in: 3                # m/s
-    rated_speed: 12          # m/s
-    cut_out: 25              # m/s
-    lambda_opt: 7.5
-    alpha: 0.15
-    wake_loss: 0.10          # Parkverlust (gesamter Windpark)
-    location:
-      lat: 52.52
-      lon: 13.405
-    date: 2025-05-06
-    turbines: 25  # Anzahl der Turbinen im Windpark
+- D_soil: 0.1
+  age: 3
+  albedo: 0.1
+  azimut: 130
+  date: '2025-05-14'
+  location:
+    lat: 52.0
+    lon: 12.0
+  name: Dresden_1
+  rated_power: 10.0
+  shading: 0.1
+  size: 1000.0
+  tilt: 20
+wind_systems: []

@@ -1,30 +1,30 @@
-import time
+import sys
 from utils.data_loader import load_yaml_config
 from simulation.simulator import create_generators, run_simulation
-import pandas as pd
 
-start_total = time.time()
-print("[INFO] Lade Konfiguration ...")
-config = load_yaml_config("config.yaml")
+def main():
+    if len(sys.argv) != 3:
+        print("Benutzung: python main.py <config.yaml> <output.csv>")
+        sys.exit(1)
 
-print("[INFO] Erstelle Generatoren ...")
-start_gen = time.time()
-generators = create_generators(config)
-print(f"[INFO] Generatoren erstellt in {time.time() - start_gen:.2f}s")
+    config_path = sys.argv[1]
+    output_csv = sys.argv[2]
 
-print("[INFO] Starte Simulation ...")
-start_sim = time.time()
-results = run_simulation(generators)
-print(f"[INFO] Simulation abgeschlossen in {time.time() - start_sim:.2f}s")
+    config = load_yaml_config(config_path)
+    generators = create_generators(config)
+    results = run_simulation(generators)
 
-print(f"[INFO] Gesamtlaufzeit: {time.time() - start_total:.2f}s")
-print("-" * 40)
+    # Beispiel CSV speichern
+    import pandas as pd
+    df_list = []
+    for model_name, power_output in results.items():
+        df = pd.DataFrame(power_output)
+        df["model"] = model_name
+        df_list.append(df)
+    all_results = pd.concat(df_list)
+    all_results.to_csv(output_csv, index=False)
 
-# Strukturierte Ausgabe der Ergebnisse
-for model_name, power_output in results.items():
-    print(f"Ergebnisse für {model_name}:")
-    for i, power in enumerate(power_output):
-        # Wenn power eine Serie ist, extrahiere den Wert
-        power_value = power.iloc[0] if isinstance(power, pd.Series) else power
-        print(f"  Stunde {i}: {power_value:.3f} MW")
-    print("-" * 40)
+    print("Simulation abgeschlossen. Ergebnisse gespeichert in:", output_csv)
+
+if __name__ == "__main__":
+    main()
