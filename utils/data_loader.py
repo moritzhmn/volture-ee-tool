@@ -2,18 +2,27 @@ import requests
 import yaml
 import pandas as pd
 
-def fetch_weather_from_api(lat, lon, date, timezone="Europe/Berlin", source="pv"):
+def fetch_weather_from_api(lat, lon, date, tilt=None, azimuth=None, timezone="Europe/Berlin", source="pv"):
     if source == "pv":
-        url_ghi = (
-            f"https://api.open-meteo.com/v1/forecast?"
+        if tilt is None or azimuth is None:
+         raise ValueError("Tilt und Azimuth müssen für PV-Daten angegeben werden")
+    # Rest wie gehabt
+        # GTI von Satellite API mit Neigung und Azimut
+        url_gti = (
+            f"https://satellite-api.open-meteo.com/v1/archive?"
             f"latitude={lat}&longitude={lon}"
-            f"&hourly=shortwave_radiation"
+            f"&hourly=global_tilted_irradiance_instant"
+            f"&models=satellite_radiation_seamless"
+            f"&tilt={tilt}&azimuth={azimuth}"
             f"&start_date={date}&end_date={date}"
             f"&timezone={timezone}"
         )
-        response_ghi = requests.get(url_ghi,timeout=10)
-        data_ghi = response_ghi.json()
-        ghi_data = data_ghi["hourly"]["shortwave_radiation"]
+        print(url_gti)
+        response_gti = requests.get(url_gti, timeout=10)
+        data_gti = response_gti.json()
+        gti_data = data_gti["hourly"]["global_tilted_irradiance_instant"]
+
+        # Temperatur von Forecast API
         url_temp = (
             f"https://api.open-meteo.com/v1/forecast?"
             f"latitude={lat}&longitude={lon}"
@@ -26,12 +35,12 @@ def fetch_weather_from_api(lat, lon, date, timezone="Europe/Berlin", source="pv"
         data_temp = response_temp.json()
         temp_data = data_temp["hourly"]["temperature_2m"]
 
-        # DataFrame erstellen
-        timestamps = data_ghi["hourly"]["time"]
+        # Zeitstempel (aus GTI-Zeitreihe)
+        timestamps = data_gti["hourly"]["time"]
         df = pd.DataFrame({"time": pd.to_datetime(timestamps)})
 
-        # Shortwave Radiation (GHI) und Temperatur hinzufügen
-        df["GHI"] = ghi_data
+        # GTI und Temperatur einfügen
+        df["GTI"] = gti_data
         df["temperature"] = temp_data
 
     elif source == "wind":

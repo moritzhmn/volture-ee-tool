@@ -12,7 +12,7 @@ def create_generators(config):
             age=pv_cfg["age"],
             shading=pv_cfg["shading"],
             albedo=pv_cfg["albedo"],
-            azimut=pv_cfg["azimut"],
+            azimuth=pv_cfg["azimuth"],
             D_soil=pv_cfg["D_soil"],
             tilt=pv_cfg["tilt"],
             size=pv_cfg["size"],
@@ -21,6 +21,8 @@ def create_generators(config):
         weather = fetch_weather_from_api(
             lat=pv_cfg["location"]["lat"],
             lon=pv_cfg["location"]["lon"],
+            tilt=pv_cfg["tilt"],
+            azimuth=pv_cfg["azimuth"],
             date=pv_cfg["date"],
             source="pv"
         )
@@ -35,7 +37,6 @@ def create_generators(config):
             cut_in=wind_cfg["cut_in"],
             rated_speed=wind_cfg["rated_speed"],
             cut_out=wind_cfg["cut_out"],
-            lambda_opt=wind_cfg.get("lambda_opt", 7.5),
             alpha=wind_cfg.get("alpha", 0.2),
             wake_loss=wind_cfg.get("wake_loss", 0.1),
             location=wind_cfg["location"],

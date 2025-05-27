@@ -22,7 +22,7 @@ class PVWindSimApp:
             "Alter": "age",
             "Beschattung (0-1)": "shading",
             "Albedo (0-1)": "albedo",
-            "Azimut (°)": "azimut",
+            "Azimut (°)": "azimuth",
             "Verschmutzung (0-1)": "D_soil",
             "Neigung (°)": "tilt",
             "Fläche (m^2)": "size",
@@ -55,7 +55,7 @@ class PVWindSimApp:
         self.pv_tab = ttk.Frame(tab_control)
         self.wind_tab = ttk.Frame(tab_control)
         tab_control.add(self.pv_tab, text="PV-Anlagen")
-        tab_control.add(self.wind_tab, text="Windanlagen")
+        tab_control.add(self.wind_tab, text="Wind")
         tab_control.pack(expand=1, fill="both")
 
         self.create_pv_tab()
@@ -119,7 +119,7 @@ class PVWindSimApp:
                 "age": int(self.pv_entries["Alter"].get()),
                 "shading": float(self.pv_entries["Beschattung (0-1)"].get()),
                 "albedo": float(self.pv_entries["Albedo (0-1)"].get()),
-                "azimut": int(self.pv_entries["Azimut (°)"].get()),
+                "azimuth": int(self.pv_entries["Azimut (°)"].get()),
                 "D_soil": float(self.pv_entries["Verschmutzung (0-1)"].get()),
                 "tilt": int(self.pv_entries["Neigung (°)"].get()),
                 "size": float(self.pv_entries["Fläche (m^2)"].get()),
@@ -186,7 +186,7 @@ class PVWindSimApp:
                 "age": int(self.pv_entries["Alter"].get()),
                 "shading": float(self.pv_entries["Beschattung (0-1)"].get()),
                 "albedo": float(self.pv_entries["Albedo (0-1)"].get()),
-                "azimut": int(self.pv_entries["Azimut (°)"].get()),
+                "azimuth": int(self.pv_entries["Azimut (°)"].get()),
                 "D_soil": float(self.pv_entries["Verschmutzung (0-1)"].get()),
                 "tilt": int(self.pv_entries["Neigung (°)"].get()),
                 "size": float(self.pv_entries["Fläche (m^2)"].get()),
