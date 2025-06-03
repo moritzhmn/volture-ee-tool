@@ -1,102 +1,79 @@
 from .base_generator import BaseGenerator
-from .cp_interpolation import get_turbine_power # Funktion zum Abruf von cp basierend auf Klasse + Windgeschwindigkeit
+from .turbine_power_interpolation import get_turbine_power_value # Funktion zum Abruf von cp basierend auf Klasse + Windgeschwindigkeit
 
 class WindModel(BaseGenerator):
     def __init__(
         self,
         name,
+        case,
         rated_power,
-        cut_in,
-        cut_out,
-        rated_speed,
-        rotor_radius,
-        hub_height,
-        alpha=0.2,
-        wake_loss=0.10,
-        location=None,
-        turbines_count=1
+        location,
+        cut_in =None,
+        cut_out =None,
+        hub_height =None,
+        turbine_rated_power = None
     ):
-        super().__init__(name, location)
-        self.rated_power = rated_power  # Gesamtleistung des Parks in kW
-        self.cut_in = cut_in
-        self.cut_out = cut_out
-        self.rated_speed = rated_speed
-        self.rotor_radius = rotor_radius
-        self.hub_height = hub_height
-        self.alpha = alpha
-        self.wake_loss = wake_loss
-        self.air_density = 1.225  # kg/m³ Standardluftdichte
-        self.turbines_count = turbines_count
-        
-        # Nennleistung pro Turbine
-        self.turbine_rated_power = self.rated_power / self.turbines_count
-        
-        # Turbinenklasse bestimmen
-        self.turbine_class = self.classify_turbine(self.turbine_rated_power)
-        print(self.turbine_class)
+        super().__init__(name, location, rated_power, case)
+        self.cut_in = cut_in if cut_in is not None else 3
+        self.cut_out = cut_out if cut_out is not None else 25
+        self.hub_height = hub_height if hub_height is not None else 100
+        self.turbine_rated_power = turbine_rated_power if turbine_rated_power is not None else 3.2
 
-    def classify_turbine(self, rated_power_mw):
-        if rated_power_mw < 1:
-            return '<1 MW'
-        elif rated_power_mw < 2:
-            return '1-2 MW'
-        elif rated_power_mw < 2.3:
-            return '2.0–2.3 MW'
-        elif rated_power_mw < 2.6:
-            return '2.3–2.6 MW'
-        elif rated_power_mw < 3.0:
-            return '2.6–3.0 MW'
-        elif rated_power_mw < 3.3:
-            return '3.0–3.3 MW'
-        elif rated_power_mw < 3.7:
-            return '3.3–3.7 MW'
-        elif rated_power_mw < 5.2:
-            return '3.7–5.2 MW'
+    @staticmethod
+    def get_alpha(case):
+        if case == 'best':
+            alpha = 0.14 #flaches offenes Land
+        elif case == 'worst':
+            alpha = 0.3 #Stark raues Gelände (Wald, Stadt) 
+        elif case == 'normal':
+            alpha = 0.2 #Mäßig raues Gelände (Felder, Dörfer)
+
         else:
-            return '>=5.2 MW'
-        
+            raise ValueError(f"Alpha für Sezenario: '{case}' nicht definiert!")
+        return(alpha)
+    
+    @staticmethod
+    def get_wake_loss(case):
+        if case == 'best':
+            return 0.03   # 3 % Verlust bei idealem Layout
+        elif case == 'normal':
+            return 0.10   # 10 % typischer Wake-Loss
+        elif case == 'worst':
+            return 0.15   # 15 % z. B. bei dichten Parks mit viel Turbulenz
+        else:
+            raise ValueError(f"Wake Loss Faktor für Szenario: '{case}' nicht definiert!")
+    
+    @staticmethod
+    def get_eta_sys(case):
+        if case == 'best':
+         eta_sys = 0.95 
+        elif case == 'worst':
+         eta_sys = 0.82
+        elif case == 'normal':
+         eta_sys = 0.90
+        else:
+            raise ValueError(f"Kein Eintrag gefunden für Case '{case}'")
+        return eta_sys
 
-    def adjust_wind_speed(self, v_ref, ref_height=10):
-        """Windgeschwindigkeit auf Nabenhöhe skalieren"""
-        return v_ref * (self.hub_height / ref_height) ** self.alpha
-
+      
     def simulate_power(self, weather_row):
-     v_ref = weather_row["wind_speed"]
-     print(f"Referenz-Windgeschwindigkeit (10m): {v_ref:.2f} m/s")
+        #Definiert Windgeschwindgkeit am Referenztag auf 10m Höhe 
+        wind_speed_10 = weather_row.get("wind", None)
+        if wind_speed_10 is None:
+            raise ValueError("Windgeschwindigkeit nicht im Wetterdatensatz gefunden")
+        #Windgeschwindikeit auf Nabenhöhe interpolieren
+        wind_speed_hub = wind_speed_10 * (self.hub_height/10) ** self.get_alpha(self.case)
 
-     v = self.adjust_wind_speed(v_ref)
-     print(f"Windgeschwindigkeit auf Nabenhöhe (adjusted): {v:.2f} m/s")
+        #Prüft ob Windgeschwindigkeit im Arbeitsbereich liegt
+        if wind_speed_hub < self.cut_in or wind_speed_hub > self.cut_out:
+         return 0
+        #Turbinenanzahl bestimmen
+        turbine_count = max(1,round(self.rated_power / self.turbine_rated_power)) 
+        #Trubinenleistung bestimmen 
+        turbine_power_cal = get_turbine_power_value(self.turbine_rated_power, wind_speed_hub, self.case)
+        # Parkleistung mit Parkverlusten und Systemverlusten berechnen
+        park_power_cal = turbine_power_cal * turbine_count * (1-self.get_wake_loss(self.case)) * self.get_eta_sys(self.case) /1e6
 
-     if v < self.cut_in or v > self.cut_out:
-        print(f"Windgeschwindigkeit {v:.2f} m/s außerhalb des Betriebsbereichs ({self.cut_in}-{self.cut_out} m/s). Leistung = 0")
-        return 0
 
-    # Wake-Verlust berücksichtigen
-     v_eff = v * (1 - self.wake_loss)
-     print(f"Effektive Windgeschwindigkeit nach Wake-Verlust ({self.wake_loss*100:.1f}%): {v_eff:.2f} m/s")
-     
-     #Windleistung in aktuellen Modell nicht notwendig
-     #swept_area = 3.1416 * self.rotor_radius ** 2  # A = π * R²
-     #print(f"Rotorfläche: {swept_area:.2f} m²")
-
-     #p_wind = 0.5 * self.air_density * swept_area * v_eff ** 3
-     #print(f"Leistung Wind (theoretisch): {p_wind:.2f} W")
-
-    # cp aus get_cp() nach Turbinenklasse und effektiver Windgeschwindigkeit
-     p_turbine = get_turbine_power(self.turbine_class, v_eff) / 1e6
-     print(f"Leistung pro Turbine vor Begrenzung: {p_turbine:.2f} MW")
-
-    # Leistung pro Turbine darf Nennleistung nicht überschreiten
-     p_turbine = min(p_turbine, self.turbine_rated_power) 
-     print(f"Leistung pro Turbine nach Begrenzung auf Nennleistung ({self.turbine_rated_power} MW): {p_turbine:.2f} MW")
-
-    # Gesamtleistung Windpark
-     total_power = p_turbine * self.turbines_count
-     print(f"Gesamtleistung Windpark vor Systemverlusten: {total_power:.2f} MW")
-
-    # Verluste durch Einspeisung, Umrichter etc.
-     system_efficiency_factor = 1 - 0.015 - 0.03 - 0.01
-     total_power *= system_efficiency_factor
-     print(f"Gesamtleistung Windpark nach Systemverlusten: {total_power:.2f} MW")
-
-     return total_power
+ 
+        return park_power_cal 

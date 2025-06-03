@@ -1,0 +1,50 @@
+anlagen:
+  # Osten (Dresden)
+  - name: PV_Ost
+    typ: pv
+    leistung_mw: 140
+    standort: Dresden-Klotzsche
+  - name: Wind_Ost
+    typ: wind
+    leistung_mw: 330
+    standort: Dresden-Klotzsche
+
+  # West (Saarbrücken)
+  - name: PV_Sued
+    typ: pv
+    leistung_mw: 100
+    standort: Saarbrücken-Ensheim
+  - name: Wind_Sued
+    typ: wind
+    leistung_mw: 250
+    standort: Saarbrücken-Ensheim
+
+  # Mitte (Gießen)
+  - name: PV_Mitte
+    typ: pv
+    leistung_mw: 120
+    standort: Gießen/Wettenberg
+  - name: Wind_Mitte
+    typ: wind
+    leistung_mw: 300
+    standort: Gießen/Wettenberg
+
+  # Süd (Würzburg)
+  - name: PV_Main
+    typ: pv
+    leistung_mw: 110
+    standort: Würzburg
+  - name: Wind_Main
+    typ: wind
+    leistung_mw: 280
+    standort: Würzburg
+
+  # Norden (Bremen)
+  - name: PV_Nord
+    typ: pv
+    leistung_mw: 130
+    standort: Bremen
+  - name: Wind_Nord
+    typ: wind
+    leistung_mw: 350
+    standort: Bremen
