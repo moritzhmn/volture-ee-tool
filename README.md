@@ -42,7 +42,7 @@ pip install pvlib pandas numpy geopy matplotlib tqdm requests pyyaml joblib
 ## 2. Konfiguration der Anlagen
 
 Lege eine Datei config/anlagen.yaml mit folgendem Aufbau an:
-
+```bash
 anlagen:
   - name: PV_Berlin
     typ: wind
@@ -52,8 +52,9 @@ anlagen:
     typ: wind
     leistung_mw: 15
     standort: Nuernberg
+```
 
-Hinweise:
+#### Hinweise:
 - Der Standort muss exakt einer Station aus der Liste entsprechen (siehe Verfügbare Stationen).
 - Die Station kann mithilfe der Datei config/wetterstationen_interaktiv.html im Browser gefunden werden.
 
@@ -63,13 +64,16 @@ Hinweise:
 
 In main.py kann der Simulationszeitraum eingestellt werden:
 
+```bash
 season = 5  # für Mai
 year = 2025  # Jahr
+```
+#####Optional kann in simulator.py ein bestimmter Tag simuliert werden:
 
-Optional kann in simulator.py ein bestimmter Tag simuliert werden:
-
-# Beispiel für 12. Mai 2025:
+Beispiel für 12. Mai 2025:
+```bash
 date_range = [datetime.date(2025, 5, 12)]
+```
 
 Wichtig: Monat und Jahr in main.py müssen mit dem Tagesdatum übereinstimmen!
 
@@ -79,9 +83,10 @@ Wichtig: Monat und Jahr in main.py müssen mit dem Tagesdatum übereinstimmen!
 
 Standardparameter können in den Modellen wie folgt geändert werden:
 
+```bash
 self.hub_height = hub_height if hub_height is not None else 100
 self.turbine_rated_power = turbine_rated_power if turbine_rated_power is not None else 3.2
-
+```
 ---
 
 ## 5. Auswahl des DWD-Endpunkts
@@ -89,10 +94,14 @@ self.turbine_rated_power = turbine_rated_power if turbine_rated_power is not Non
 Je nach Simulationszeitraum muss der Datenendpunkt angepasst werden:
 
 Aktuelle Daten (letzte ca. 2 Jahre):
+```bash
 url = f"https://opendata.dwd.de/.../recent/10minutenwerte_{code}_{station_id}_akt.zip"
+```
 
 Historische Daten:
+```bash
 url = f"https://opendata.dwd.de/.../historical/10minutenwerte_{code}_{station_id}_{start_str}_{end_string}_hist.zip"
+```
 
 Verfügbare Datenquellen:
 - Solar: https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/solar/
@@ -105,9 +114,9 @@ Verfügbare Datenquellen:
 Cache ggf. leeren.
 
 Starte die Simulation mit:
-
+```bash
 python main.py
-
+```
 Beobachte die Konsolenausgabe zur Fehlersuche. Es kann vorkommen, dass für einige Zeiträume keine Wetterdaten verfügbar sind.
 
 ---
