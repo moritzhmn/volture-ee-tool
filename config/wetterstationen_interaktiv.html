@@ -1,0 +1,603 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Wetterstationen Karte</title>
+    <style>
+        #map { height: 90vh; }
+        body { font-family: sans-serif; }
+        #searchBox { margin: 10px; }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.geometryutil"></script>
+</head>
+<body>
+    <div id="searchBox">
+        <input type="text" id="locationInput" placeholder="Ort eingeben" />
+        <button onclick="searchLocation()">Suchen</button>
+        <p id="result"></p>
+    </div>
+    <div id="map"></div>
+
+    <script>
+        let map = L.map('map').setView([51.0, 10.0], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>'
+        }).addTo(map);
+
+        let stations = [
+    {
+        "name": "Aachen-Orsbach",
+        "lat": 50.7983219,
+        "lon": 6.0242799
+    },
+    {
+        "name": "Ahaus",
+        "lat": 52.0761541,
+        "lon": 7.004876
+    },
+    {
+        "name": "Alfeld",
+        "lat": 51.9869477,
+        "lon": 9.8253376
+    },
+    {
+        "name": "Angermünde",
+        "lat": 53.017276,
+        "lon": 13.9981503
+    },
+    {
+        "name": "Arkona",
+        "lat": 54.6767791,
+        "lon": 13.4378189
+    },
+    {
+        "name": "Augsburg",
+        "lat": 48.3690341,
+        "lon": 10.8979522
+    },
+    {
+        "name": "Bamberg",
+        "lat": 49.8916044,
+        "lon": 10.8868478
+    },
+    {
+        "name": "Belm",
+        "lat": 52.3029003,
+        "lon": 8.1247011
+    },
+    {
+        "name": "Berlin Brandenburg",
+        "lat": 52.3664935,
+        "lon": 13.4880389
+    },
+    {
+        "name": "Berlin-Tegel",
+        "lat": 52.5881913,
+        "lon": 13.2896968
+    },
+    {
+        "name": "Berus",
+        "lat": 49.267181,
+        "lon": 6.6982903
+    },
+    {
+        "name": "Boizenburg",
+        "lat": 53.375079,
+        "lon": 10.7232364
+    },
+    {
+        "name": "Boltenhagen",
+        "lat": 53.9864246,
+        "lon": 11.205923
+    },
+    {
+        "name": "Braunschweig",
+        "lat": 52.2646577,
+        "lon": 10.5236066
+    },
+    {
+        "name": "Bremen",
+        "lat": 53.0758196,
+        "lon": 8.8071646
+    },
+    {
+        "name": "Bremerhaven",
+        "lat": 53.5505392,
+        "lon": 8.5851945
+    },
+    {
+        "name": "Bremervörde",
+        "lat": 53.4850249,
+        "lon": 9.1362085
+    },
+    {
+        "name": "Chemnitz",
+        "lat": 50.8323531,
+        "lon": 12.918914
+    },
+    {
+        "name": "Chieming",
+        "lat": 47.8942626,
+        "lon": 12.5381465
+    },
+    {
+        "name": "Cottbus",
+        "lat": 51.7567447,
+        "lon": 14.3357307
+    },
+    {
+        "name": "Cuxhaven",
+        "lat": 53.86878,
+        "lon": 8.698286
+    },
+    {
+        "name": "Deuselbach",
+        "lat": 49.7534843,
+        "lon": 7.0535522
+    },
+    {
+        "name": "Diepholz",
+        "lat": 52.7478987,
+        "lon": 8.7615261
+    },
+    {
+        "name": "Doberlug-Kirchhain",
+        "lat": 51.6219804,
+        "lon": 13.5660433
+    },
+    {
+        "name": "Dresden-Klotzsche",
+        "lat": 51.1144381,
+        "lon": 13.788889
+    },
+    {
+        "name": "Dörnick",
+        "lat": 54.1634837,
+        "lon": 10.3604506
+    },
+    {
+        "name": "Düsseldorf",
+        "lat": 51.2254018,
+        "lon": 6.7763137
+    },
+    {
+        "name": "Eisenach",
+        "lat": 50.9747134,
+        "lon": 10.3193565
+    },
+    {
+        "name": "Emden",
+        "lat": 53.3670541,
+        "lon": 7.2058304
+    },
+    {
+        "name": "Fehmarn",
+        "lat": 54.4687375,
+        "lon": 11.1340848
+    },
+    {
+        "name": "Feldberg/Mecklenburg",
+        "lat": 53.3307404,
+        "lon": 13.4338941
+    },
+    {
+        "name": "Feldberg/Schwarzwald",
+        "lat": 47.8620963,
+        "lon": 8.1019449
+    },
+    {
+        "name": "Fichtelberg",
+        "lat": 49.9998624,
+        "lon": 11.8518957
+    },
+    {
+        "name": "Freiburg",
+        "lat": 47.9960901,
+        "lon": 7.8494005
+    },
+    {
+        "name": "Freudenstadt",
+        "lat": 48.4637727,
+        "lon": 8.4111727
+    },
+    {
+        "name": "Friesoythe-Altenoythe",
+        "lat": 53.0207659,
+        "lon": 7.8774935
+    },
+    {
+        "name": "Fürstenzell",
+        "lat": 48.5229974,
+        "lon": 13.3147436
+    },
+    {
+        "name": "Gardelegen",
+        "lat": 52.5269433,
+        "lon": 11.3927377
+    },
+    {
+        "name": "Garmisch-Partenkirchen",
+        "lat": 47.4923741,
+        "lon": 11.0962815
+    },
+    {
+        "name": "Genthin",
+        "lat": 52.4063738,
+        "lon": 12.1561742
+    },
+    {
+        "name": "Gera-Leumnitz",
+        "lat": 50.886288,
+        "lon": 12.150606
+    },
+    {
+        "name": "Gießen/Wettenberg",
+        "lat": 50.6056994,
+        "lon": 8.6566009
+    },
+    {
+        "name": "Greifswald",
+        "lat": 54.095791,
+        "lon": 13.3815238
+    },
+    {
+        "name": "Görlitz",
+        "lat": 51.1563185,
+        "lon": 14.991018
+    },
+    {
+        "name": "Göttingen",
+        "lat": 51.5328328,
+        "lon": 9.9351811
+    },
+    {
+        "name": "Hamburg-Fuhlsbüttel",
+        "lat": 53.6363621,
+        "lon": 9.9945501
+    },
+    {
+        "name": "Hannover",
+        "lat": 52.3744779,
+        "lon": 9.7385532
+    },
+    {
+        "name": "Harzgerode",
+        "lat": 51.6381169,
+        "lon": 11.1465703
+    },
+    {
+        "name": "Helgoland",
+        "lat": 54.1820608,
+        "lon": 7.8876314
+    },
+    {
+        "name": "Hersfeld",
+        "lat": 50.8604177,
+        "lon": 9.6767709
+    },
+    {
+        "name": "Hof",
+        "lat": 50.3219015,
+        "lon": 11.9178807
+    },
+    {
+        "name": "Hohenpeißenberg",
+        "lat": 47.7941442,
+        "lon": 11.0057418
+    },
+    {
+        "name": "Kahler Asten",
+        "lat": 51.1793403,
+        "lon": 8.4893372
+    },
+    {
+        "name": "Kaisersbach-Cronhütte",
+        "lat": 48.9110764,
+        "lon": 9.6845213
+    },
+    {
+        "name": "Kempten",
+        "lat": 47.7267063,
+        "lon": 10.3168835
+    },
+    {
+        "name": "Klippeneck",
+        "lat": 48.1071863,
+        "lon": 8.7541972
+    },
+    {
+        "name": "Konstanz",
+        "lat": 47.659216,
+        "lon": 9.1750718
+    },
+    {
+        "name": "Köln/Bonn",
+        "lat": 50.8616702,
+        "lon": 7.1455238
+    },
+    {
+        "name": "Lahr",
+        "lat": 49.9440252,
+        "lon": 6.2909576
+    },
+    {
+        "name": "Lautertal-Oberlauter",
+        "lat": 50.2992758,
+        "lon": 10.9803739
+    },
+    {
+        "name": "Leck",
+        "lat": 54.7739263,
+        "lon": 8.9725059
+    },
+    {
+        "name": "Leinefelde",
+        "lat": 51.3878458,
+        "lon": 10.3212678
+    },
+    {
+        "name": "Leipzig/Halle",
+        "lat": 51.4211901,
+        "lon": 12.2295859
+    },
+    {
+        "name": "Lindenberg",
+        "lat": 53.7651998,
+        "lon": 13.0225848
+    },
+    {
+        "name": "Lippspringe",
+        "lat": 51.7833,
+        "lon": 8.81667
+    },
+    {
+        "name": "List auf Sylt",
+        "lat": 55.0177399,
+        "lon": 8.4359967
+    },
+    {
+        "name": "Lübeck-Blankensee",
+        "lat": 53.804929,
+        "lon": 10.7126079
+    },
+    {
+        "name": "Lüdenscheid",
+        "lat": 51.218137,
+        "lon": 7.6396975
+    },
+    {
+        "name": "Magdeburg",
+        "lat": 52.1315889,
+        "lon": 11.6399609
+    },
+    {
+        "name": "Mannheim",
+        "lat": 49.4892913,
+        "lon": 8.4673098
+    },
+    {
+        "name": "Marienberg",
+        "lat": 50.6507279,
+        "lon": 13.163188
+    },
+    {
+        "name": "Meiningen",
+        "lat": 50.56761,
+        "lon": 10.4153029
+    },
+    {
+        "name": "Michelstadt-Vielbrunn",
+        "lat": 49.717873,
+        "lon": 9.0997075
+    },
+    {
+        "name": "Mühldorf",
+        "lat": 48.2405007,
+        "lon": 12.5250991
+    },
+    {
+        "name": "Münster/Osnabrück",
+        "lat": 52.1342178,
+        "lon": 7.6829214
+    },
+    {
+        "name": "Norderney",
+        "lat": 53.7056126,
+        "lon": 7.1438175
+    },
+    {
+        "name": "Nürnberg",
+        "lat": 49.453872,
+        "lon": 11.077298
+    },
+    {
+        "name": "Oberstdorf",
+        "lat": 47.4104347,
+        "lon": 10.2774409
+    },
+    {
+        "name": "Oschatz",
+        "lat": 51.2979627,
+        "lon": 13.1081103
+    },
+    {
+        "name": "Potsdam",
+        "lat": 52.4009309,
+        "lon": 13.0591397
+    },
+    {
+        "name": "Regensburg",
+        "lat": 49.0195333,
+        "lon": 12.0974869
+    },
+    {
+        "name": "Rheinstetten",
+        "lat": 48.968549,
+        "lon": 8.3097117
+    },
+    {
+        "name": "Rostock-Warnemünde",
+        "lat": 54.1800537,
+        "lon": 12.0823687
+    },
+    {
+        "name": "Saarbrücken-Ensheim",
+        "lat": 49.2165735,
+        "lon": 7.1119174
+    },
+    {
+        "name": "Sankt Peter-Ording",
+        "lat": 54.3172664,
+        "lon": 8.6254937
+    },
+    {
+        "name": "Schleswig",
+        "lat": 54.51851,
+        "lon": 9.5653284
+    },
+    {
+        "name": "Soltau",
+        "lat": 52.9844301,
+        "lon": 9.8399034
+    },
+    {
+        "name": "Straubing",
+        "lat": 48.8839157,
+        "lon": 12.5955773
+    },
+    {
+        "name": "Stuttgart (Schnarrenberg)",
+        "lat": 48.82455,
+        "lon": 9.1985
+    },
+    {
+        "name": "Trier-Petrisberg",
+        "lat": 49.750033,
+        "lon": 6.6601188
+    },
+    {
+        "name": "Trollenhagen",
+        "lat": 53.6066527,
+        "lon": 13.2899543
+    },
+    {
+        "name": "Ueckermünde",
+        "lat": 53.7371069,
+        "lon": 14.0458887
+    },
+    {
+        "name": "Waldmünchen",
+        "lat": 49.3775728,
+        "lon": 12.7062127
+    },
+    {
+        "name": "Weiden",
+        "lat": 49.8068258,
+        "lon": 7.3007004
+    },
+    {
+        "name": "Weinbiet",
+        "lat": 49.3763452,
+        "lon": 8.1213098
+    },
+    {
+        "name": "Werl",
+        "lat": 51.5533457,
+        "lon": 7.9155558
+    },
+    {
+        "name": "Wiesenburg",
+        "lat": 50.6454312,
+        "lon": 12.5653057
+    },
+    {
+        "name": "Wittenberg",
+        "lat": 51.8666527,
+        "lon": 12.646761
+    },
+    {
+        "name": "Würzburg",
+        "lat": 49.7780356,
+        "lon": 9.9434769
+    },
+    {
+        "name": "Zinnwald-Georgenfeld",
+        "lat": 50.7361363,
+        "lon": 13.7638353
+    },
+    {
+        "name": "Zugspitze",
+        "lat": 47.421215,
+        "lon": 10.986297
+    },
+    {
+        "name": "Öhringen",
+        "lat": 49.2005034,
+        "lon": 9.5024397
+    }
+];
+        let stationMarkers = [];
+
+        for (let s of stations) {
+            let marker = L.marker([s.lat, s.lon])
+                .addTo(map)
+                .bindPopup(s.name);
+            stationMarkers.push({ name: s.name, lat: s.lat, lon: s.lon, marker: marker });
+        }
+
+        function searchLocation() {
+            let input = document.getElementById("locationInput").value;
+            console.log("🔍 Suche nach:", input);
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("📦 Nominatim Antwort:", data);
+                    if (data.length === 0) {
+                        alert("Ort nicht gefunden.");
+                        return;
+                    }
+                    let lat = parseFloat(data[0].lat);
+                    let lon = parseFloat(data[0].lon);
+                    console.log(`📍 Gefundener Ort: (${lat}, ${lon})`);
+
+                    let userMarker = L.marker([lat, lon], {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34]
+                        })
+                    }).addTo(map).bindPopup("Gesuchter Ort").openPopup();
+
+                    map.setView([lat, lon], 8);
+
+                    let minDist = Infinity;
+                    let closest = null;
+
+                    for (let s of stations) {
+                        let dist = map.distance([lat, lon], [s.lat, s.lon]);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closest = s;
+                        }
+                    }
+
+                    console.log(`✅ Nächste Station: ${closest.name}, Distanz: ${(minDist / 1000).toFixed(2)} km`);
+
+                    document.getElementById("result").innerText =
+                        `Nächste Wetterstation: ${closest.name} (Entfernung: ${(minDist / 1000).toFixed(2)} km)`;
+                })
+                .catch(err => {
+                    console.error("❌ Fehler bei der Geocoding-Anfrage:", err);
+                    alert("Fehler bei der Standortsuche.");
+                });
+        }
+    </script>
+</body>
+</html>

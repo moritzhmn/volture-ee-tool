@@ -1,1 +1,26 @@
+# macOS-Systemdateien
 .DS_Store
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+
+# Python-Cache
+__pycache__/
+*.py[cod]
+
+# Lokale Cache- und Output-Ordner
+output/
+cache/
+
+# Lokale absolute Pfade (nicht nötig und nicht empfehlenswert in .gitignore)
+# Besser ist:
+models/__pycache__/
+utils/__pycache__/
+simulation/__pycache__/
+
+# Jupyter/IPython
+.ipynb_checkpoints/
+
+# Sonstiges (falls du VS Code nutzt)
+.vscode/

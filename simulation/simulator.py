@@ -1,7 +1,7 @@
 from geopy.geocoders import Nominatim
 from models.pv_model import PVModel
 from models.wind_model import WindModel
-from utils.data_loader import load_weather_data
+from utils.data_loader_dwd import load_weather_data
 import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 
-
+#Lädt die in Kordinaten der config.yaml enthaltenen Anlagen einmalig um API zu schonen
 def resolve_locations(anlagen):
     geolocator = Nominatim(user_agent="volture", timeout=5)
     standort_coords = {}
@@ -33,9 +33,9 @@ def resolve_locations(anlagen):
     return standort_coords
 
 
+#Simuliert einzelne Tage
 def simulate_day(args):
-    ref_date, anlage, case, season, coords, year_input = args
-
+    ref_date, anlage, case, coords = args
     name = anlage["name"]
     power = anlage["leistung_mw"]
     typ = anlage["typ"]
@@ -45,13 +45,12 @@ def simulate_day(args):
     if not latlon:
      raise ValueError(f"❌ Keine Koordinaten für Standort '{location}' (Anlage: {name}). Simulation abgebrochen.")
 
-    # ✅ Koordinaten-Tuple erzeugen
+    #Koordinaten-Tuple erzeugen
     coords_tuple = (latlon["latitude"], latlon["longitude"])
 
     ref_date_str = ref_date.strftime('%Y-%m-%d')
     weather = load_weather_data(location, ref_date_str, typ)
-
-    # ✅ Modell initialisieren mit (lat, lon)-Tuple
+    #Modell initialisieren mit (lat, lon)-Tuple
     if typ == 'pv':
         model = PVModel(name=name, rated_power=power, location=coords_tuple, case=case)
     elif typ == 'wind':
@@ -60,22 +59,50 @@ def simulate_day(args):
         return name, []
 
     time_series = []
-    for hour in weather:
-        power_out = model.simulate_power(hour)
-        timestamp = pd.to_datetime(hour["datetime"])
-        time_series.append({"timestamp": timestamp, "power_mw": power_out})
+
+    # Initiale Werte
+    t1 = pd.to_datetime(weather[0]["datetime"])
+    p1 = model.simulate_power(weather[0])
+
+    for i in range(1, len(weather)):
+        t2 = pd.to_datetime(weather[i]["datetime"])
+        p2 = model.simulate_power(weather[i])
+
+        # Ursprünglicher 10-min-Punkt
+        time_series.append({"timestamp": t1, "power_mw": p1})
+
+        # Interpolierter 5-min-Punkt
+        t_mid = t1 + (t2 - t1) / 2
+        p_mid = (p1 + p2) / 2
+        time_series.append({"timestamp": t_mid, "power_mw": p_mid})
+
+        # Verschiebe t1/p1 → t2/p2
+        t1 = t2
+        p1 = p2
+
+    # Letzten Originalpunkt noch ergänzen
+    time_series.append({"timestamp": t1, "power_mw": p1})
 
     return name, time_series
 
 
 def create_generators(config, season, case, year_input):
     generators = []
-    #Erstellt Liste mit allen Tagen des Monats der simuliert werden soll, year --> genriertes Jahr, year_input --> in main() festgelegtes Jahr
+
+    # Standard: ganzer Monat
     year, month = year_input, season
     start_date = datetime.date(year, month, 1)
     end_day = calendar.monthrange(year, month)[1]
     end_date = datetime.date(year, month, end_day)
+
+    # Erzeuge Liste aller Tage im Monat
     date_range = [start_date + datetime.timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+
+    # --------------------------------------
+    # OPTIONAL: Nur EINEN Tag simulieren?
+    # Entkommentiere und passe das Datum an:
+    # date_range = [datetime.date(2025, 5, 12)]
+    # --------------------------------------
 
     #Erstellt Standorte für alle Standorte der Anlagen die in Config gelistet sind
     anlagen = config.get("anlagen", [])
@@ -91,16 +118,16 @@ def create_generators(config, season, case, year_input):
             continue
         for ref_date in date_range:
             #Erstellt die zu simulierenden Tage
-            tasks.append((ref_date, anlage, case, season, standort_coords,year_input))
+            tasks.append((ref_date, anlage, case, standort_coords))
 
-    print(f"🔧 Starte Multiprocessing mit {cpu_count()} Kernen für {len(tasks)} Aufgaben...")
+    print(f" Starte Multiprocessing mit {cpu_count()} Kernen für {len(tasks)} Aufgaben...")
     #Pool ist Klasse aus Multiprocessing Modul , pool ist selbstgewählt Instanz der Klasse
     with Pool(cpu_count()) as pool:
         #Erstellt leere Ergbnisliste
         results = []
         #Ermöglicht Fortschrittsanzeige
         pbar = tqdm(total=len(tasks), desc="🔄 Simuliere Tage", leave=False)
-        #Übergibt alle Tasks an simulate_day Funktion --> zeitgleiche Ausführung zu Performance-Steigerung
+        #Übergibt alle Tasks an simulate_day Methode --> zeitgleiche Ausführung zu Performance-Steigerung
         for result in pool.imap_unordered(simulate_day, tasks):
             results.append(result)
             pbar.update()
@@ -108,6 +135,7 @@ def create_generators(config, season, case, year_input):
 
     #Leere generator_map (Dictionary) wird erstellt
     generator_map = {}
+
     #Gruppiert alle Zeitreihen pro Anlage
     for name, times in results:
         if name not in generator_map:
@@ -123,8 +151,7 @@ def create_generators(config, season, case, year_input):
             "location": location,
             "time_series": times
         })
-
-    # 📊 Tagesenergie aggregieren & typische Tage visualisieren
+        
     all_series = []
 
     #Zeitreihen in DataFrames umwandeln (Tabelle aus timestamp und power)
@@ -137,12 +164,12 @@ def create_generators(config, season, case, year_input):
         ts = ts.rename(columns={"power_mw": name})  # Spalte eindeutig benennen
         all_series.append(ts)
 
-    # Zeitreihen aller Anlagen zusammenführen
+    #Zeitreihen aller Anlagen zusammenführen
     total_df = pd.concat(all_series, axis=1).fillna(0)
     #Summierung der Leistung 
-    # Summierte Leistung als neue Spalte hinzufügen
+    #Summierte Leistung als neue Spalte hinzufügen
     total_df['power_sum'] = total_df.sum(axis=1)
  
 
-    # Rückgabe der typischen Tagesprofile als DataFrames
+    #Rückgabe der typischen Tagesprofile als DataFrames
     return total_df.reset_index()

@@ -1,26 +1,30 @@
 def main():
-    import sys
     import os
-    from utils.data_loader import load_yaml_config, load_weather_data
+    from utils.data_loader_dwd import load_yaml_config
     from simulation.simulator import create_generators
     from tqdm import tqdm
     import pandas as pd
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    import calendar
-    import datetime
-
+ 
+    #Konfiguraions Pfade
     config_path = 'config/anlagen.yaml'
     output_base_path = "output/"
-
+    
+    #Lädt Konfiguration mithilfe der in data_loader definierten Methode load_yaml_config
     config = load_yaml_config(config_path)
 
-    season = 4
-    year = 2024
+    #Definiert zu Siumlierenden Monat
+    season = 5
+    year = 2025
+
+    #Liste der im Zeitraum zu simulierenden Szenarieren --> Einfluss in PV und Wind Modell gewählten Parameter
     cases = ['best','worst','normal']
 
+    #Schleife läuft Szenarien durch
     for case in tqdm(cases, desc="Verarbeite Szenarien"):
+        #Ruft Simulationsprogramm create_generators auf
         df = create_generators(config, season, case, year)  # DataFrame mit allen Anlagen + power_sum
 
         # Sicherstellen, dass timestamp als datetime vorliegt
@@ -29,11 +33,10 @@ def main():
 
         # Aggregationen pro Tag
         daily_max = df.groupby('date')['power_sum'].max()
-        print(daily_max)
         daily_min = df.groupby('date')['power_sum'].min()
         daily_ptp = daily_max - daily_min  # Peak-to-Peak Leistung
 
-        # max stündliche Sprungänderung berechnen (per Tag)
+        # max 5 min Sprungänderung berechnen (per Tag)
         daily_diff = df.groupby('date')['power_sum'].apply(lambda x: x.diff().abs().max())
 
         # Tage mit den gewünschten Eigenschaften
@@ -72,6 +75,7 @@ def main():
         plt.plot(volatile_day_df['timestamp'], volatile_day_df['power_sum'], label=f"Volatile Tag: {volatile_day}")
         plt.plot(sharp_change_day_df['timestamp'], sharp_change_day_df['power_sum'], label=f"Sharp Change Tag: {sharp_change_day}")
 
+        # --- Einstellungen des Plots ---  
         plt.xlabel("Timestamp")
         plt.ylabel("Leistung (MW)")
         plt.title(f"Referenz-Tagesprofile für Szenario '{case}' - {season:02d}/{year}")
@@ -80,7 +84,7 @@ def main():
         plt.tight_layout()
 
         # Wasserzeichen hinzufügen (halbtransparent, diagonal)
-        plt.figtext(0.5, 0.5, "MH_EE", fontsize=40, color='gray', alpha=0.3, ha='center', va='center', rotation=30)
+        plt.figtext(0.5, 0.5, "MH_EE", fontsize=40, color='gray', alpha=0.2, ha='center', va='center', rotation=30)
 
         # Plot speichern
         plt.savefig(os.path.join(output_path, f"{base_filename}_referenz_tage_plot.png"))
