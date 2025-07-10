@@ -9,7 +9,7 @@ Dieses Projekt simuliert die Energieerzeugung von Photovoltaik- und Windkraftanl
 ### 1.1 Repository klonen
 
 ```bash
-git clone https://github.com/dein-benutzername/dein-repo.git
+git clone https://github.com/moritzhmn/volture-ee-tool.git
 cd dein-repo
 ```
 
