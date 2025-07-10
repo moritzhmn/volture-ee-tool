@@ -8,27 +8,35 @@ Dieses Projekt simuliert die Energieerzeugung von Photovoltaik- und Windkraftanl
 
 ### 1.1 Repository klonen
 
+```bash
 git clone https://github.com/dein-benutzername/dein-repo.git
 cd dein-repo
+```
 
 ### 1.2 Virtuelle Umgebung erstellen und aktivieren
 
-# Windows:
+### Windows:
+```bash
 py -m venv venv
 venv\Scripts\activate
+```
 
-# Mac/Linux:
+### Mac/Linux:
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
 ### 1.3 Bibliotheken installieren
 
+```bash
 pip install -r requirements.txt
+```
+##### Alternativ globale Installation (nicht empfohlen):
 
-Alternativ globale Installation (nicht empfohlen):
-
+```bash
 pip install pvlib pandas numpy geopy matplotlib tqdm requests pyyaml joblib
-
+```
 ---
 
 ## 2. Konfiguration der Anlagen
