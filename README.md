@@ -69,7 +69,7 @@ In main.py kann der Simulationszeitraum eingestellt werden:
 season = 5  # für Mai
 year = 2025  # Jahr
 ```
-#####Optional kann in simulator.py ein bestimmter Tag simuliert werden:
+Optional kann in simulator.py ein bestimmter Tag simuliert werden:
 
 Beispiel für 12. Mai 2025:
 ```bash
