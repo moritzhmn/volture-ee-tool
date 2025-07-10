@@ -10,7 +10,7 @@ Dieses Projekt simuliert die Energieerzeugung von Photovoltaik- und Windkraftanl
 
 ```bash
 git clone https://github.com/moritzhmn/volture-ee-tool.git
-cd dein-repo
+cd volture-ee-tool
 ```
 
 ### 1.2 Virtuelle Umgebung erstellen und aktivieren
