@@ -104,7 +104,7 @@ Historische Daten:
 url = f"https://opendata.dwd.de/.../historical/10minutenwerte_{code}_{station_id}_{start_str}_{end_string}_hist.zip"
 ```
 
-Verfügbare Datenquellen:
+Verfügbare Datenquellen des DWD:
 - Solar: https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/solar/
 - Wind: https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/wind/
 
