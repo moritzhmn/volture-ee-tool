@@ -114,7 +114,7 @@ class PVModel(BaseGenerator):
 
         # Warnung bei GHI = 0 zwischen 10–15 Uhr
         if 10 <= timestamp.hour <= 15 and ghi == 0:
-            print(f"⚠️ Warnung: Globalstrahlung ist 0 bei {timestamp}")
+            print(f"Warnung: Globalstrahlung ist 0 bei {timestamp}")
 
         latitude, longitude = self.location
         site = pvlib.location.Location(latitude, longitude)

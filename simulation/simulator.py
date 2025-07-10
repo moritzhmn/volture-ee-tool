@@ -43,7 +43,7 @@ def simulate_day(args):
     latlon = coords.get(location)
 
     if not latlon:
-     raise ValueError(f"❌ Keine Koordinaten für Standort '{location}' (Anlage: {name}). Simulation abgebrochen.")
+     raise ValueError(f" Keine Koordinaten für Standort '{location}' (Anlage: {name}). Simulation abgebrochen.")
 
     #Koordinaten-Tuple erzeugen
     coords_tuple = (latlon["latitude"], latlon["longitude"])
@@ -114,7 +114,7 @@ def create_generators(config, season, case, year_input):
     #Prüft ob alle Anlagen einen gültigen Standort zugeteilt bekommen haben --> ansonsten Warnung
     for anlage in anlagen:
         if not anlage.get("standort") or anlage["standort"] not in standort_coords:
-            print(f"⚠️ Anlage '{anlage['name']}' übersprungen (kein gültiger Standort).")
+            print(f"Anlage '{anlage['name']}' übersprungen (kein gültiger Standort).")
             continue
         for ref_date in date_range:
             #Erstellt die zu simulierenden Tage

@@ -70,7 +70,7 @@ class WindModel(BaseGenerator):
         timestamp = pd.to_datetime(weather_row["datetime"])
         # Warnung bei Windgeschwindigkeit = 0 zwischen 10–15 Uhr
         if 10 <= timestamp.hour <= 15 and wind_speed_10 == 0:
-            print(f"⚠️ Warnung: Windgeschwindigkeit ist 0 bei {timestamp} – mögliche fehlende oder fehlerhafte Wetterdaten.")
+            print(f"Warnung: Windgeschwindigkeit ist 0 bei {timestamp} – mögliche fehlende oder fehlerhafte Wetterdaten.")
 
         # Windgeschwindikeit auf Nabenhöhe interpolieren
         wind_speed_hub = wind_speed_10 * (self.hub_height / 10) ** self.get_alpha(self.case)

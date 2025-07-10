@@ -235,6 +235,7 @@ DATE_MAP = {
     "15000": ("20200101", "20241231"),
 }
 
+#Cache-System speichert geladen .zip Datein zwsichen
 @memory.cache
 def _parse_zip_content(content, station_id):
     with zipfile.ZipFile(io.BytesIO(content)) as z:
@@ -247,6 +248,7 @@ def _parse_zip_content(content, station_id):
 
     return df
 
+#Ließt entweder .zip ein oder lädt sie zuerst herunter
 def _load_monthly_weather_df(station_id, url, local_zip_path):
 
     # Pruefe ob ZIP-Datei lokal vorhanden ist (Dateicache)
@@ -254,7 +256,7 @@ def _load_monthly_weather_df(station_id, url, local_zip_path):
         with open(local_zip_path, "rb") as f:
             content = f.read()
     else:
-        print(f"⬇️ Lade ZIP von URL: {url}")
+        print(f"Lade ZIP von URL: {url}")
         resp = requests.get(url)
         resp.raise_for_status()
         content = resp.content
@@ -267,18 +269,18 @@ def _load_monthly_weather_df(station_id, url, local_zip_path):
 
     return df
 
-
+#Hauptfunktion Wetterdaten
 def load_weather_data(location, date, typ):
     target_date = pd.to_datetime(date).date()
     year, month = target_date.year, target_date.month
 
     station_id = LOCATION_MAP.get(location)
     if not station_id:
-        raise ValueError(f"❌ Kein Mapping fuer Standort '{location}' gefunden.")
+        raise ValueError(f"Kein Mapping fuer Standort '{location}' gefunden.")
 
     start_str, end_str = DATE_MAP.get(station_id, (None, None))
     if not start_str:
-        raise ValueError(f"❌ Kein gueltiger Zeitraum fuer Station-ID {station_id} hinterlegt.")
+        raise ValueError(f"Kein gueltiger Zeitraum fuer Station-ID {station_id} hinterlegt.")
 
     if typ == "pv":
         data_type = "solar"
@@ -304,7 +306,7 @@ def load_weather_data(location, date, typ):
     df = df[df['MESS_DATUM'].dt.date == target_date]
 
     if df.empty:
-        raise ValueError(f"⚠️ Keine Daten fuer '{location}' am {target_date} ({key}).")
+        raise ValueError(f"Keine Daten fuer '{location}' am {target_date} ({key}).")
 
     # Erzeuge Ergebnis
     result = [
