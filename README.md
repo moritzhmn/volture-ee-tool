@@ -11,3 +11,12 @@ Dieses Projekt simuliert die Energieerzeugung von Photovoltaik- und Windkraftanl
 ```bash
 git clone https://github.com/dein-benutzername/dein-repo.git
 cd dein-repo
+```
+## 1.2 Virtuelle Umgebung erstellen und aktivieren
+
+### Windows:
+
+```bash
+py -m venv venv
+venv\Scripts\activate
+```
