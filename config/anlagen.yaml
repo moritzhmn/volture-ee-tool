@@ -6,5 +6,5 @@ anlagen:
   - name: Wind_Nürnberg
     leistung_mw: 15
     typ: wind
-    standort: Nürnberg
+    standort: Nuernberg
 

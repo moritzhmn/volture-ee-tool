@@ -38,10 +38,10 @@ anlagen:
     typ: wind
     leistung_mw: 20
     standort: Potsdam
-  - name: Wind_Nürnberg
+  - name: Wind_NÜrnberg
     leistung_mw: 15
     typ: wind
-    standort: Nürnberg
+    standort: Nuernberg
 
 Hinweis:
 	•	Der Standort muss exakt einer Station aus der Liste entsprechen (siehe Verfügbare Stationen).

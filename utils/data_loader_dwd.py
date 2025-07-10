@@ -7,7 +7,7 @@ import yaml
 import os 
 from joblib import Memory
 
-# Cache-Verzeichnis für joblib
+# Cache-Verzeichnis fuer joblib
 memory = Memory("cache/joblib", verbose=0)
 
 def load_yaml_config(path):
@@ -20,7 +20,7 @@ LOCATION_MAP = {
     "Aachen-Orsbach": "15000",
     "Ahaus": "07374",
     "Alfeld": "07367",
-    "Angermünde": "00164",
+    "Angermuende": "00164",
     "Arkona": "00183",
     "Augsburg": "00232",
     "Bamberg": "00282",
@@ -33,7 +33,7 @@ LOCATION_MAP = {
     "Braunschweig": "00662",
     "Bremen": "00691",
     "Bremerhaven": "00701",
-    "Bremervörde": "00704",
+    "Bremervoerde": "00704",
     "Chemnitz": "00853",
     "Chieming": "00856",
     "Cottbus": "00880",
@@ -42,8 +42,8 @@ LOCATION_MAP = {
     "Diepholz": "00963",
     "Doberlug-Kirchhain": "01001",
     "Dresden-Klotzsche": "01048",
-    "Dörnick": "06163",
-    "Düsseldorf": "01078",
+    "Doernick": "06163",
+    "Duesseldorf": "01078",
     "Eisenach": "07368",
     "Emden": "05839",
     "Fehmarn": "05516",
@@ -53,16 +53,16 @@ LOCATION_MAP = {
     "Freiburg": "01443",
     "Freudenstadt": "01468",
     "Friesoythe-Altenoythe": "01503",
-    "Fürstenzell": "05856",
+    "Fuerstenzell": "05856",
     "Gardelegen": "01544",
     "Garmisch-Partenkirchen": "01550",
     "Genthin": "01605",
     "Gera-Leumnitz": "01612",
     "Gießen/Wettenberg": "01639",
     "Greifswald": "01757",
-    "Görlitz": "01684",
-    "Göttingen": "01691",
-    "Hamburg-Fuhlsbüttel": "01975",
+    "Goerlitz": "01684",
+    "Goettingen": "01691",
+    "Hamburg-Fuhlsbuettel": "01975",
     "Hannover": "02014",
     "Harzgerode": "02044",
     "Helgoland": "02115",
@@ -70,12 +70,12 @@ LOCATION_MAP = {
     "Hof": "02261",
     "Hohenpeißenberg": "02290",
     "Kahler Asten": "02483",
-    "Kaisersbach-Cronhütte": "02485",
+    "Kaisersbach-Cronhuette": "02485",
     "Kempten": "02559",
     "Kleiner Feldberg/Taunus": "02601",
     "Klippeneck": "02638",
     "Konstanz": "02712",
-    "Köln/Bonn": "02667",
+    "Koeln/Bonn": "02667",
     "Lahr": "02812",
     "Lautertal-Oberlauter": "00867",
     "Leck": "02907",
@@ -84,27 +84,27 @@ LOCATION_MAP = {
     "Lindenberg": "03015",
     "Lippspringe": "03028",
     "List auf Sylt": "03032",
-    "Lübeck-Blankensee": "03086",
-    "Lüdenscheid": "03098",
-    "Lügde-Paenbruch": "06197",
+    "Luebeck-Blankensee": "03086",
+    "Luedenscheid": "03098",
+    "Luegde-Paenbruch": "06197",
     "Magdeburg": "03126",
     "Mannheim": "05906",
     "Marienberg": "03167",
     "Meiningen": "03231",
     "Meßstetten-Appental": "03268",
     "Michelstadt-Vielbrunn": "03287",
-    "Mühldorf": "03366",
-    "Münster/Osnabrück": "01766",
+    "Muehldorf": "03366",
+    "Muenster/Osnabrueck": "01766",
     "Norderney": "03631",
-    "Nürburg-Barweiler": "03660",
-    "Nürnberg": "03668",
+    "Nuerburg-Barweiler": "03660",
+    "Nuernberg": "03668",
     "Oberstdorf": "03730",
     "Oschatz": "03811",
     "Potsdam": "03987",
     "Regensburg": "04104",
     "Rheinstetten": "04177",
-    "Rostock-Warnemünde": "04271",
-    "Saarbrücken-Ensheim": "04336",
+    "Rostock-Warnemuende": "04271",
+    "Saarbruecken-Ensheim": "04336",
     "Sankt Peter-Ording": "04393",
     "Schleswig": "04466",
     "Soltau": "04745",
@@ -112,18 +112,18 @@ LOCATION_MAP = {
     "Stuttgart (Schnarrenberg)": "04928",
     "Trier-Petrisberg": "05100",
     "Trollenhagen": "05109",
-    "Ueckermünde": "05142",
-    "Waldmünchen": "07370",
+    "Ueckermuende": "05142",
+    "Waldmuenchen": "07370",
     "Weiden": "05397",
-    "Weihenstephan-Dürnast": "05404",
+    "Weihenstephan-Duernast": "05404",
     "Weinbiet": "05426",
     "Werl": "05480",
     "Wiesenburg": "05546",
     "Wittenberg": "05629",
-    "Würzburg": "05705",
+    "Wuerzburg": "05705",
     "Zinnwald-Georgenfeld": "05779",
     "Zugspitze": "05792",
-    "Öhringen": "03761",
+    "Oehringen": "03761",
 }
 DATE_MAP = {
     "00164": ("20200101", "20240910"),
@@ -249,7 +249,7 @@ def _parse_zip_content(content, station_id):
 
 def _load_monthly_weather_df(station_id, url, local_zip_path):
 
-    # Prüfe ob ZIP-Datei lokal vorhanden ist (Dateicache)
+    # Pruefe ob ZIP-Datei lokal vorhanden ist (Dateicache)
     if os.path.exists(local_zip_path):
         with open(local_zip_path, "rb") as f:
             content = f.read()
@@ -274,11 +274,11 @@ def load_weather_data(location, date, typ):
 
     station_id = LOCATION_MAP.get(location)
     if not station_id:
-        raise ValueError(f"❌ Kein Mapping für Standort '{location}' gefunden.")
+        raise ValueError(f"❌ Kein Mapping fuer Standort '{location}' gefunden.")
 
     start_str, end_str = DATE_MAP.get(station_id, (None, None))
     if not start_str:
-        raise ValueError(f"❌ Kein gültiger Zeitraum für Station-ID {station_id} hinterlegt.")
+        raise ValueError(f"❌ Kein gueltiger Zeitraum fuer Station-ID {station_id} hinterlegt.")
 
     if typ == "pv":
         data_type = "solar"
@@ -304,7 +304,7 @@ def load_weather_data(location, date, typ):
     df = df[df['MESS_DATUM'].dt.date == target_date]
 
     if df.empty:
-        raise ValueError(f"⚠️ Keine Daten für '{location}' am {target_date} ({key}).")
+        raise ValueError(f"⚠️ Keine Daten fuer '{location}' am {target_date} ({key}).")
 
     # Erzeuge Ergebnis
     result = [
