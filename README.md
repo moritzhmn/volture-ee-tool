@@ -12,7 +12,7 @@ cd dein-repo
 
 Nutze ein virtuelles Environment oder installiere global:
 
-VENV:
+1.1 Venv erstellen:
 
 Windows: py -m venv venv
 venv\Scripts\activate
@@ -20,10 +20,10 @@ venv\Scripts\activate
 Mac: python3 -m venv venv
 source venv/bin/activate
 
-Bibliotheken installieren:
+1.2 Bibliotheken installieren:
 pip install -r requirements.txt
 
-oder manuell:
+gobale Installation nur:
 pip install pvlib pandas numpy geopy matplotlib tqdm requests pyyaml joblib
 
 
