@@ -42,6 +42,7 @@ pip install pvlib pandas numpy geopy matplotlib tqdm requests pyyaml joblib
 ## 2. Konfiguration der Anlagen
 
 Lege eine Datei config/anlagen.yaml mit folgendem Aufbau an:
+
 ```bash
 anlagen:
   - name: PV_Berlin
